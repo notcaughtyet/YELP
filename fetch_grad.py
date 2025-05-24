@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import time
 
-API_KEY = '-7GUXzzDrshzpS2t2U-swTDpmkMgEd2SlqOzVLsb53yydoR3jSY9_zrGH93O-XYV954A2h-mASpAvYeGlAXfskrOKHAk3D6D3Y4evvi2et3hiH_qdIjZy4HMDwMyaHYx'
+API_KEY = ''
 HEADERS = {
     'Authorization': f'Bearer {API_KEY}',
 }
@@ -13,7 +13,7 @@ def search_businesses(location):
     params = {
         'term': 'restaurants',
         'location': location,
-        'limit': 50,  # You can increase this to 50, but be cautious with API quota
+        'limit': 50,
         'sort_by': 'rating'
     }
     res = requests.get(url, headers=HEADERS, params=params)
@@ -39,7 +39,7 @@ for location in LOCATIONS:
     
     for b in businesses:
         details = get_business_details(b['id'])
-        time.sleep(0.2)  # be kind to the API
+        time.sleep(0.2)
 
         name = b.get('name')
         types = ', '.join([c['title'] for c in b.get('categories', [])])
@@ -53,13 +53,12 @@ for location in LOCATIONS:
         hours_data = details.get('hours', [])
         if hours_data:
             for h in hours_data[0].get('open', []):
-                if h['day'] == 5:  # Saturday
-                    # Yelp returns time in 24hr format like "1730" = 5:30 PM
+                if h['day'] == 5:  #Saturday
                     closing_raw = h.get('end', '')
                     if closing_raw:
                         closing_formatted = f"{closing_raw[:2]}:{closing_raw[2:]}"
                         hours = closing_formatted
-                        break  # stop after first Saturday entry
+                        break  #stop after Saturday entry
 
         all_data.append({
             'Name': name,
@@ -72,7 +71,7 @@ for location in LOCATIONS:
             'Menu': url
         })
 
-# Save to Excel
+#Save to Excel
 df = pd.DataFrame(all_data)
 df.to_excel('graduation_dinner_options.xlsx', index=False)
 
